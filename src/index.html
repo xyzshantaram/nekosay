@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nekosay</title>
+    <style>
+      html,body,:root {
+        background-color: transparent;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+      }
+
+      .bubble {
+        position: relative;
+        font-family: sans-serif;
+        font-size: 18px;
+        line-height: 24px;
+        width: 300px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        color: #000;
+      }
+
+      .bubble-bottom-left:before {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-left: 24px solid #fff;
+        border-right: 12px solid transparent;
+        border-top: 12px solid #fff;
+        border-bottom: 20px solid transparent;
+        left: 32px;
+        bottom: -24px;
+      }
+
+      img {
+        max-height: 22vh;
+      }
+
+      .body-wrapper {
+        display: flex;
+        align-items: flex-start;
+        position: absolute;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="body-wrapper">
+      <img src="./assets/neko.png">
+      <div class="bubble-wrapper">
+        <div id="bubble-text" class="bubble bubble-bottom-left">
+
+        </div>
+      </div>
+    </div>
+    <script>
+      const getMatches = window.__TAURI__.cli.getMatches;
+      const exit = window.__TAURI__.process.exit;
+
+      const neko = document.querySelector('.body-wrapper');
+      const style = window.getComputedStyle(neko);
+      const getRandomInRange = (min, max) => {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function calculateReadingTime(text) {
+          const averageReadingSpeed = 5;
+          return Math.ceil(text.length / averageReadingSpeed);
+        }
+      const text = document.querySelector('#bubble-text');
+      getMatches().then(matches => {
+        const input = matches.args?.message?.value?.join(" ") || "OwO";
+        text.innerHTML = input;
+        setTimeout(() => {
+          exit(0);
+        }, calculateReadingTime(input) * 1000);
+      });
+
+      neko.style.left = getRandomInRange(0, window.innerWidth - parseInt(style.width)) + 'px';
+      neko.style.top = getRandomInRange(0, window.innerHeight - parseInt(style.height)) + 'px';
+    </script>
+  </body>
+</html>
